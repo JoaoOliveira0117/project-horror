@@ -1,0 +1,91 @@
+[gd_scene load_steps=16 format=3 uid="uid://bs03v5k3filgr"]
+
+[ext_resource type="Texture2D" uid="uid://bbm87h7tf611q" path="res://assets/textures/environments/sky_test.jpg" id="1_qvajn"]
+[ext_resource type="PackedScene" uid="uid://dhhb5gsylof0k" path="res://scenes/entities/actors/player/player.tscn" id="1_u7m6x"]
+[ext_resource type="Texture2D" uid="uid://depjyfej6rtk1" path="res://assets/textures/texture.png" id="4_grlyy"]
+[ext_resource type="Shader" path="res://assets/textures/materials/psx_shader.gdshader" id="4_mgm4f"]
+[ext_resource type="PackedScene" uid="uid://blcnpuprfudi0" path="res://scenes/entities/test_model.tscn" id="5_s804f"]
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_g0xbl"]
+panorama = ExtResource("1_qvajn")
+
+[sub_resource type="Sky" id="Sky_s4r5v"]
+sky_material = SubResource("PanoramaSkyMaterial_g0xbl")
+
+[sub_resource type="Environment" id="Environment_4lph4"]
+background_mode = 2
+sky = SubResource("Sky_s4r5v")
+ambient_light_source = 2
+ambient_light_color = Color(1, 1, 1, 1)
+ambient_light_energy = 2.02
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_y31nj"]
+size = Vector3(50, 1, 50)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_6sdhm"]
+render_priority = 0
+shader = ExtResource("4_mgm4f")
+shader_parameter/jitter = 0.5
+shader_parameter/jitter_z_coordinate = true
+shader_parameter/jitter_depth_independent = true
+shader_parameter/affine_texture_mapping = true
+shader_parameter/alpha_scissor = 1.0
+shader_parameter/albedo = ExtResource("4_grlyy")
+
+[sub_resource type="BoxMesh" id="BoxMesh_oaf21"]
+lightmap_size_hint = Vector2i(14, 21)
+material = SubResource("ShaderMaterial_6sdhm")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_suidd"]
+albedo_texture = ExtResource("4_grlyy")
+
+[sub_resource type="BoxMesh" id="BoxMesh_05jol"]
+size = Vector3(12, 5, 0.5)
+subdivide_width = 60
+subdivide_height = 3
+subdivide_depth = 1
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_t5upb"]
+render_priority = 0
+shader = ExtResource("4_mgm4f")
+shader_parameter/jitter = 0.5
+shader_parameter/jitter_z_coordinate = true
+shader_parameter/jitter_depth_independent = true
+shader_parameter/affine_texture_mapping = true
+shader_parameter/alpha_scissor = 1.0
+shader_parameter/albedo = ExtResource("4_grlyy")
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_dcmh6"]
+size = Vector3(12, 5, 0.5)
+
+[node name="testing" type="Node3D"]
+
+[node name="world_env" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_4lph4")
+
+[node name="player" parent="." instance=ExtResource("1_u7m6x")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.85299, -0.73477)
+
+[node name="floor" type="StaticBody3D" parent="."]
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="floor"]
+shape = SubResource("BoxShape3D_y31nj")
+
+[node name="mesh" type="MeshInstance3D" parent="floor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.85167, 0)
+mesh = SubResource("BoxMesh_oaf21")
+
+[node name="wall" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -1.21388)
+
+[node name="mesh" type="MeshInstance3D" parent="wall"]
+material_override = SubResource("StandardMaterial3D_suidd")
+mesh = SubResource("BoxMesh_05jol")
+surface_material_override/0 = SubResource("ShaderMaterial_t5upb")
+
+[node name="coll" type="CollisionShape3D" parent="wall"]
+shape = SubResource("BoxShape3D_dcmh6")
+
+[node name="test_model" parent="." instance=ExtResource("5_s804f")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 6.68879)
